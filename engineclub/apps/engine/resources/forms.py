@@ -18,7 +18,7 @@ class FormHasNoInstanceException(Exception):
     pass
 
 class FindResourceForm(PlainForm):
-    
+
     post_code = forms.CharField(widget=forms.TextInput(attrs={'class': 'input-text expand'}), label='Location', help_text='enter a post code or a place name', required=False)
     kwords = forms.CharField(widget=CSVTextInput(attrs={'class': 'input-text expand'}), label='Search text', help_text='comma separated text (spaces OK)', required=False)
     events_only = forms.BooleanField(required=False)
@@ -55,7 +55,7 @@ class FindResourceForm(PlainForm):
         elif data:
             increment_failed_locations(data)
             raise forms.ValidationError("Could not find a location from what you've typed- try again?")
-            
+
         return cleaned_data
 
 class ShortResourceForm(DocumentForm):
@@ -82,9 +82,9 @@ class ShortResourceForm(DocumentForm):
             except DoesNotExist:
                 pass
         return data
-    
+
 class EventForm(DocumentForm):
-    
+
     from ecutils.fields import JqSplitDateTimeField
     from ecutils.widgets import JqSplitDateTimeWidget
 
@@ -92,7 +92,7 @@ class EventForm(DocumentForm):
 
     start = JqSplitDateTimeField(required=False,
         widget=JqSplitDateTimeWidget(attrs=widget_attrs.copy(), date_format='%d/%m/%Y'))
-    end = JqSplitDateTimeField(required=False, 
+    end = JqSplitDateTimeField(required=False,
         widget=JqSplitDateTimeWidget(attrs=widget_attrs, date_format='%d/%m/%Y'))
 
     def clean(self):
@@ -152,26 +152,26 @@ class TagsForm(DocumentForm):
 
     def clean_tags(self):
         return checktags(data, self.req_user)
-    
+
 class ShelflifeForm(DocumentForm):
     """docstring for ShelflifeForm"""
     # dummy = forms.CharField(required=False)
     pass
-    
+
 class CurationForm(DocumentForm):
-    
+
     outcome = forms.CharField(widget=forms.HiddenInput)
 
     tags = forms.CharField(widget=CSVTextInput(attrs={'class': 'input-text expand'}), help_text='comma separated tags (spaces OK)', required=False)
     note = forms.CharField(widget=forms.Textarea(attrs={'class': 'input-text expand'}), required=False)
     # data = forms.CharField(widget=forms.Textarea, required=False)
-    
+
     def clean_tags(self):
         return checktags(self.cleaned_data['tags'], self.req_user)
 
 REPORT_CHOICES=(
-    (SEVERITY_LOW, 'Not serious- a spelling mistake or some other small correction'), 
-    (SEVERITY_MEDIUM, 'Quite serious- something wrong, misleading, or should be checked'), 
+    (SEVERITY_LOW, 'Not serious- a spelling mistake or some other small correction'),
+    (SEVERITY_MEDIUM, 'Quite serious- something wrong, misleading, or should be checked'),
     (SEVERITY_HIGH, 'Serious- content that might not suitable for ALISS'),
     (SEVERITY_CRITICAL, 'Very serious- content that is dangerous or offensive')
     )
@@ -182,3 +182,6 @@ class ResourceReportForm(PlainForm):
         choices=REPORT_CHOICES,
         label="How serious is this?")
     message = forms.CharField(widget=forms.Textarea(attrs={'class': 'input-text large'}))
+
+class UploadResourceForm(forms.Form):
+    file  = forms.FileField()

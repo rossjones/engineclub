@@ -1,8 +1,8 @@
 from django.conf.urls.defaults import *
-
+from enginecab.views import one_off_util
 
 urlpatterns = patterns('enginecab.views',
-    
+
     url(r'^$', 'users', name='cab'),
     url(r'^analytics/$', 'analytics', name='cab_analytics'),
     url(r'^issues/$', 'issues', name='cab_issues'),
@@ -28,9 +28,9 @@ urlpatterns = patterns('enginecab.views',
     (r'^invite/', include('invites.urls')),
 
     # url(r'^fix-resource-accounts/$', 'enginecab.views.fix_resource_accounts', name='cab-fix-resource-accounts'),
-    url(r'^one-off-util/$', 'one_off_util', name='cab_one_off_util'),
+    url(r'^one-off-util/$', one_off_util, name='cab_one_off_util'),
     # url(r'^remove-dud-curations/$', 'enginecab.views.remove_dud_curations', name='remove-dud-curations'),
     # url(r'^show-curationless-resources/$', 'enginecab.views.show_curationless_resources', name='show-curationless-resources'),
     # url(r'^fix-curationless-resources/$', 'enginecab.views.fix_curationless_resources', name='fix-curationless-resources'),
-    
+
 )

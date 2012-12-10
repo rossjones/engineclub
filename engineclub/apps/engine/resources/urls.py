@@ -7,6 +7,7 @@ urlpatterns = patterns('',
     url(r'^resource/$', 'resources.views.resource_index', name='resource_list'),
     # NB add reads the rest of the path, for use with popup params
     url(r'^resource/add/', 'resources.views.resource_add', name='resource_add'),
+    url(r'^resource/upload/', 'resources.views.resource_upload', name='resource_upload'),
     url(r'^resource/(?P<object_id>\w+)/edit/$', 'resources.views.resource_edit', name='resource_edit'),
     url(r'^resource/find/$', 'resources.views.resource_find', name='resource_find'),
     url(r'^resource/(?P<object_id>\w+)/remove/$', 'resources.views.resource_remove', name='resource_remove'),

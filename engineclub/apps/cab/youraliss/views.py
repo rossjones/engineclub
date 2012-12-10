@@ -25,10 +25,10 @@ def profile(request, object_id=None, template_name='youraliss/profile.html'):
     return accounts_detail(request, object.id, template_name)
 
 @login_required
-def account(request, template_name='youraliss/account.html'):    
+def account(request, template_name='youraliss/account.html'):
     object =  get_one_or_404(Account, local_id=str(request.user.id))
     return account_edit(request, object.id, template_name, next='youraliss')
-    
+
 @login_required
 def curations(request, template_name='youraliss/curations.html'):
     object =  get_one_or_404(Account, local_id=str(request.user.id))
@@ -37,14 +37,14 @@ def curations(request, template_name='youraliss/curations.html'):
     return render_to_response(template_name, RequestContext(request, template_context))
 
 @login_required
-def lists(request, template_name='youraliss/lists.html'):    
+def lists(request, template_name='youraliss/lists.html'):
     account =  get_one_or_404(Account, local_id=str(request.user.id))
     objects = Collection.objects(owner=account).order_by('-name')
     template_context = {'account': account, 'objects': objects}
     return render_to_response(template_name, RequestContext(request, template_context))
 
 @login_required
-def lists_detail(request, object_id, template_name='youraliss/lists_detail.html'):    
+def lists_detail(request, object_id, template_name='youraliss/lists_detail.html'):
     return def_list_detail(request, object_id, template_name)
     # account =  get_one_or_404(Account, local_id=str(request.user.id))
     # objects = Collection.objects(owner=account).order_by('-name')

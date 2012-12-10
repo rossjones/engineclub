@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 
 
 urlpatterns = patterns('',
-    
+
     url(r'^$', 'youraliss.views.profile', name='youraliss'),
     url(r'^account/$', 'youraliss.views.account', name='youraliss_account'),
     url(r'^curations/$', 'youraliss.views.curations', name='youraliss_curations'),

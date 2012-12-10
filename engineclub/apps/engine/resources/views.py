@@ -22,10 +22,11 @@ from resources.models import Resource, Curation, add_curation, CalendarEvent,  \
     STATUS_OK, STATUS_BAD, Moderation
     # COLL_STATUS_NEW, COLL_STATUS_LOC_CONF, COLL_STATUS_TAGS_CONF, COLL_STATUS_COMPLETE #location_from_cb_value,
 from resources.forms import FindResourceForm, ShortResourceForm, LocationUpdateForm, EventForm, \
-    TagsForm, ShelflifeForm, CurationForm, ResourceReportForm
+    TagsForm, ShelflifeForm, CurationForm, ResourceReportForm, UploadResourceForm
 from ecutils.utils import get_one_or_404, get_pages
 from issues.models import (Issue, SEVERITY_LOW, SEVERITY_MEDIUM,
     SEVERITY_HIGH, SEVERITY_CRITICAL)
+from resources.upload import handle_uploaded_file
 
 from accounts.models import Account, get_account
 
@@ -76,7 +77,7 @@ def resource_report(request, object_id, template_name='depot/resource_report.htm
             issue.related_document = resource
             issue.save()
             issue.notify_created()
-            
+
             # only moderate as STATUS_BAD if SEVERITY_CRITICAL
             if severity == SEVERITY_CRITICAL:
                 resource.moderate_as_bad(reporter)
@@ -106,10 +107,10 @@ def get_req_data(req_path):
     """
     given url like:
     /depot/resource/add/popup|true/title|Inverclyde%20Globetrotters%20%7C%20Facebook/page|http%3A%2F%2Fwww.facebook.com%2FInverclydeGlobetrotters/t|Having%20fun%20staying%20active%20by%20virtually%20walking%20around%20the%20world%20(and%20beyond!)%20without%20leaving%20Greenock
-    
+
     gets an input path like:
     u'/depot/resource/add/popup|true/title|Inverclyde Globetrotters | Facebook/page|http~~www.facebook.com/InverclydeGlobetrotters/t|Having fun staying active by virtually walking around the world (and beyond!) without leaving Greenock'
-    
+
     and returns a dict like:
     {u't': u'Having fun staying active by virtually walking around the world (and beyond!) without leaving Greenock', u'popup': u'true', u'page': u'http~~www.facebook.com/InverclydeGlobetrotters', u'title': u'Inverclyde Globetrotters | Facebook'})
     """
@@ -144,6 +145,28 @@ def get_req_data(req_path):
         result[TEXT] = req_path[i_text+LEN_TEXT:]
 
     return result
+
+@login_required
+def resource_upload(request, template_name='depot/resource_upload.html'):
+    import urllib
+    req_path = urllib.unquote(request.path).replace('http://', 'http~~').replace('http:/', 'http~~').replace('||', '\n')
+    req_data = get_req_data(req_path)
+    debug_info = (req_path, req_data)
+    template_info = _template_info(req_data.get('popup', ''))
+
+    if request.method == 'POST':
+        form = UploadResourceForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request, request.FILES['file'])
+            #return HttpResponseRedirect('/success/url/')
+
+    else:
+        form = UploadResourceForm()
+
+    return render_to_response(template_name,
+        RequestContext( request, {'template_info': template_info, 'debug_info': debug_info,
+                                  'form': form }))
+
 
 @login_required
 def resource_add(request, template_name='depot/resource_edit.html'):
@@ -226,7 +249,7 @@ def resource_edit(request, object_id, template_name='depot/resource_edit.html'):
                 object.calendar_event = CalendarEvent(start=event_start, end=eventform.cleaned_data['end'])
             else:
                 object.calendar_event = None
-            object = resourceform.save(do_save=False)            
+            object = resourceform.save(do_save=False)
             try:
                 object.save(author=acct, reindex=True)
                 return resource_edit_complete(request, object, template_info)
