@@ -3,6 +3,8 @@ Engineclub
 :Info: See `the Engineclub site <http://engineclub.org>`_ for more information. See `github <http://github.com/snowcloud/engineclub/>`_ for the latest source.
 :Author: Derek Hoy <derek@snowcloud.co.uk>
 
+Contact developers@aliss.org
+
 About
 -----
 Engineclub was started in January 2010 as part of the ALISS project for the National Health Service in Scotland. It requires `Django <http://djangoproject.com>`_.
